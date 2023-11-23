@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name:
+                '*/main']], extensions: [], userRemoteConfigs: [[credentialsId:
+                'd0e05425-d986-4c69-931f-45d7ab660755',url:
+                'https://github.com/capriciousBoson/CSE5333inclasslab3.git']]])
+                sh "ls -lat"
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building'
+                sh 'pip3 install --no-cache-dir -r requirements.txt'
+            }
+
+        }
+        stage('Deploy') {
+                steps {
+                echo 'Deploying....'
+                sh 'python3 flasktodo.py'
+                }
+            }
+
+    }
+}
