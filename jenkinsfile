@@ -28,8 +28,15 @@ pipeline {
                         sh "gcloud auth activate-service-account --key-file=${GCP_KEY_FILE}"
 
                         // Deploy Flask app on GCE instance
+                        // Deploy Flask app on GCE instance
                         sh "gcloud compute scp --recurse . ${GCE_INSTANCE_NAME}:~ --project=${GCP_PROJECT_ID} --zone=${ZONE}"
+                        
+                        // Add the following line to include the directory in PATH
+                        sh 'export PATH=$PATH:/var/lib/jenkins/.local/bin'
+
+                        // Start Flask app using gunicorn
                         sh "gcloud compute ssh ${GCE_INSTANCE_NAME} --project=${GCP_PROJECT_ID} --zone=${ZONE} --command 'cd ~ && gunicorn -b :5000 flasktodo:app &'"
+        
                     }
                 }
             }
