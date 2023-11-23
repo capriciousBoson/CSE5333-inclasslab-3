@@ -6,10 +6,8 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Installing dependencies'
-                sh '''cd CSE5333inclasslab3'''
-                sh 'pip install -r requirements.txt'
-                echo 'Installing dependencies completed..'
+
+                echo 'Doing Build activities..'
             }
         }
         stage('Test') {
