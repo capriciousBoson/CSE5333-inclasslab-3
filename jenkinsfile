@@ -7,9 +7,7 @@ pipeline {
         GCE_INSTANCE_NAME = 'inclass-lab-3'
         ZONE = 'us-central1-a'
         GITHUB_REPO_URL = 'https://github.com/capriciousBoson/CSE5333inclasslab3.git'
-        GCP_CREDENTIALS_FILE = credentials('d0e05425-d986-4c69-931f-45d7ab660755')
- 
-           }
+    }
 
     stages {
         stage('Clone Repository') {
@@ -23,21 +21,14 @@ pipeline {
                 script {
                     sh 'pip install -r requirements.txt'  // Install Flask app dependencies
 
-                    // Use the GCP service account key credential
-                        sh "cp ${GCP_CREDENTIALS_FILE} ."
+                    // Authenticate with Google OAuth and bind the credentials
+                    bindGoogleRobotCredentials(credentialsId: 'your-gcp-service-account-key-id', variable: 'GCP_KEY_FILE')
 
-                        // Deploy Flask app on GCE instance
-                        sh "gcloud compute scp --recurse . ${GCE_INSTANCE_NAME}:~ --project=${GCP_PROJECT_ID} --zone=${ZONE}"
-                        
-                        // Add the following line to include the directory in PATH
-                        sh 'export PATH=$PATH:/var/lib/jenkins/.local/bin'
-
-                        // Start Flask app using gunicorn
-                        sh "gcloud compute ssh ${GCE_INSTANCE_NAME} --project=${GCP_PROJECT_ID} --zone=${ZONE} --command 'cd ~ && gunicorn -b :5000 flasktodo:app &'"
-        
-                    }
+                    // Deploy Flask app on GCE instance
+                    sh "gcloud compute scp --recurse . ${GCE_INSTANCE_NAME}:~ --project=${GCP_PROJECT_ID} --zone=${ZONE}"
+                    sh "gcloud compute ssh ${GCE_INSTANCE_NAME} --project=${GCP_PROJECT_ID} --zone=${ZONE} --command 'cd ~ && gunicorn -b :5000 flasktodo:app &'"
                 }
             }
         }
     }
-
+}
