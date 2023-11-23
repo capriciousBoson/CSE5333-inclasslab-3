@@ -22,8 +22,11 @@ pipeline {
                     sh 'pip install -r requirements.txt'  // Install Flask app dependencies
 
                     // Authenticate with Google OAuth and bind the credentials
-                    bindGoogleRobotCredentials(credentialsId: 'd0e05425-d986-4c69-931f-45d7ab660755', variable: 'GCP_KEY_FILE')
+                    // Retrieve Google Service Account key file path
+                    def GCP_KEY_FILE = credentials("${GCP_CREDENTIALS_ID}")
 
+                    // Deploy Flask app on GCE instance
+                    sh "gcloud auth activate-service-account --key-file=${GCP_KEY_FILE}"
                     // Deploy Flask app on GCE instance
                     sh "gcloud compute scp --recurse . ${GCE_INSTANCE_NAME}:~ --project=${GCP_PROJECT_ID} --zone=${ZONE}"
                     sh "gcloud compute ssh ${GCE_INSTANCE_NAME} --project=${GCP_PROJECT_ID} --zone=${ZONE} --command 'cd ~ && gunicorn -b :5000 flasktodo:app &'"
