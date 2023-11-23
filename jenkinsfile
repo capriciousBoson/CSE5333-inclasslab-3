@@ -7,6 +7,7 @@ pipeline {
         GCE_INSTANCE_NAME = 'inclass-lab-3'
         ZONE = 'us-central1-a'
         GITHUB_REPO_URL = 'https://github.com/capriciousBoson/CSE5333inclasslab3.git'
+        GCP_CREDENTIALS_FILE = credentials('d0e05425-d986-4c69-931f-45d7ab660755')
  
            }
 
@@ -23,11 +24,8 @@ pipeline {
                     sh 'pip install -r requirements.txt'  // Install Flask app dependencies
 
                     // Use the GCP service account key credential
-                    withCredentials([fileCredentials(credentialsId: 'd0e05425-d986-4c69-931f-45d7ab660755', variable: 'GCP_KEY_FILE')]) {
-                        // Authenticate with GCP using service account key
-                        sh "gcloud auth activate-service-account --key-file=${GCP_KEY_FILE}"
+                        sh "cp ${GCP_CREDENTIALS_FILE} ."
 
-                        // Deploy Flask app on GCE instance
                         // Deploy Flask app on GCE instance
                         sh "gcloud compute scp --recurse . ${GCE_INSTANCE_NAME}:~ --project=${GCP_PROJECT_ID} --zone=${ZONE}"
                         
