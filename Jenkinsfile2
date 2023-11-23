@@ -20,7 +20,7 @@ pipeline {
         stage('Deploy') {
                 steps {
                 echo 'Deploying....'
-                sh 'python3 flasktodo.py'
+                sh 'sudo python3 flasktodo.py'
                 }
             }
 
