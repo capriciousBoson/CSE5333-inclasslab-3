@@ -7,6 +7,7 @@ pipeline {
         GCE_INSTANCE_NAME = 'inclass-lab-3'
         ZONE = 'us-central1-a'
         GITHUB_REPO_URL = 'https://github.com/capriciousBoson/CSE5333inclasslab3.git'
+        GCP_CREDENTIALS_ID = 'd0e05425-d986-4c69-931f-45d7ab660755'
     }
 
     stages {
